@@ -1,2 +1,2 @@
-# django-cendek-url-shorter
+# cendek-url-shorter
 Url Shortener with django
