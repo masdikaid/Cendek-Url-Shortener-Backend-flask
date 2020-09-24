@@ -1,21 +1,34 @@
 # import sys
 # sys.path.append("d:\\project\\cendek-url-shorter\\backend\\webapi")
 from datetime import datetime
-from firebase import createShorterUrl,getAllUrlData, getUrlData, getUrlDataByUser, getVisitor, setVisitorData, setExpirationData
+from firebase import createShorterUrl,getAllUrlData, getUrlData, getUrlDataByUser, getVisitor, setVisitorData, setExpirationData, updateUrlData, deleteUrlData
 
 class UrlStore():
-    def __init__(self, userid, target_url, urlid=None, isactive=True, expiration=None, create_at=None):
+    def __init__(self, userid, target_url=[], urlid=None, isactive=True, expiration=None, create_at=None):
         self.urlid = urlid
         self.userid = userid
-        self.target_url = target_url
+        self.target_url = self.setTargetUrl(target_url)
         self.isactive = isactive
         self.expiration = expiration
-        self.create_at = create_at
+        self.create_at = create_at                
     
+    def setTargetUrl(self, target_url):
+        if not len(target_url) == 0 :
+            return [{ datetime.now().strftime("%Y%m%d%H%M%S%f") : {"title":url["title"], "url":url["url"], "desc":url["desc"], "thumbnail":url["thumbnail"]}} for url in target_url ]
+        else :
+            raise ValueError("target url must have minimum one url")
+
     def create(self):
         self.create_at = datetime.now()
         url_data = createShorterUrl(self.urlid, self.userid, self.toDict)
         self.urlid = url_data["urlid"]
+
+    def update(self):
+        updateUrlData(self.urlid, self.toDict)
+
+    def delete(self):
+        deleteUrlData(self.urlid)
+        return None
 
     @staticmethod
     def get(urlid):
