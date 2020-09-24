@@ -17,6 +17,13 @@ def createShorterUrl(urlid, userid, urldata):
     else :
         raise ValueError("id already axists")
 
+def updateUrlData(urlid, urldata):
+    urldata = db.collection(u"shortenurl").document(urlid)
+    if urldata.get().exists :
+        urldata.update(urldata)
+    else :
+        raise ValueError("data not found")
+
 def getUrlData(urlid):
     urldata = db.collection(u"shortenurl").document(urlid).get()
     if urldata.exists :
@@ -25,7 +32,8 @@ def getUrlData(urlid):
         raise ValueError("data not found")
 
 def getUrlDataByUser(userid):
-    urldata = db.collection(u"shortenurl").where("userid", "==", userid).get()
+    urldata = db.collection(u"shortenurl").where("userid", "==", userid)
+    urldata = urldata.where("isactive","==", True).get()
     if len(urldata) > 0 :
         urls = []
         for u in urldata :
@@ -37,7 +45,7 @@ def getUrlDataByUser(userid):
         raise ValueError("data not found")
 
 def getAllUrlData(userid):
-    urldata = db.collection(u"shortenurl").get()
+    urldata = db.collection(u"shortenurl").where("isactive","==",True).get()
     if len(urldata) > 0 :
         urls = []
         for u in urldata :
@@ -70,5 +78,15 @@ def setExpirationData(urlid, expirationdata):
     urldata = db.collection(u"shortenurl").document(urlid)
     if urldata.get().exists :
         urldata = urldata.update({u"expiration" : expirationdata})
+    else :
+        raise ValueError("data not found")
+
+def deleteUrlData(urlid):
+    urldata = db.collection(u"shortenurl").document(urlid)
+    if urldata.get().exists :
+        newurldata = urldata.get().to_dict()
+        newurldata["isactive"]=False
+        newurldata = db.collection(u"shortenurl").set(urldata)
+        urldata.delete()
     else :
         raise ValueError("data not found")
