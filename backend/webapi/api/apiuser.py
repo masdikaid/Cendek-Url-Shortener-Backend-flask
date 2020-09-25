@@ -24,7 +24,7 @@ class ApiUserManager(Resource):
         self.parser = reqparse.RequestParser()
         self.parser.add_argument("AuthToken", location="headers", required=True, help="Token Needed")
 
-    def get(self, user_id):
+    def get(self):
         args = self.parser.parse_args()
         if args["AuthToken"] :
             try :
@@ -35,7 +35,7 @@ class ApiUserManager(Resource):
         else :
             return {"messege" : "Token is needed"}, 400
     
-    def put(self, user_id):
+    def put(self):
         self.parser.add_argument("firstname")
         self.parser.add_argument("lastname")
         self.parser.add_argument("avatar")
@@ -57,3 +57,25 @@ class ApiUserManager(Resource):
             return {"messege" : "Token is needed"}, 400
 
 
+class VerificationHandler(Resource):
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument("AuthToken", location="headers", required=True, help="Token Needed")
+
+    def get(self):
+        args = self.parser.parse_args()
+        if args["AuthToken"] :
+            try :
+                user = User.verifyToken(args["AuthToken"])
+                user.sendEmailVerification()
+                return {"message":"Success"}
+            except ValueError as e :
+                return {"messege": f"{e}"}, 403
+        else :
+            return {"messege" : "Token is needed"}, 400
+
+    def post(self):
+        # self.parser.add_argument("code")
+        # args = self.parser.parse_args()
+        # return {"message": f"Success {args["code"]}" }
+        pass

@@ -24,15 +24,14 @@ class ApiAdminGetCreateUser(Resource):
     def post(self):
         self.parser.add_argument("firstname", default=None)
         self.parser.add_argument("lastname", default=None)
+        self.parser.add_argument("isadmin", default=False, type=bool)
         self.parser.add_argument("email", required=True, help="Email is Required")
         self.parser.add_argument("password", required=True, help="Password is Required")
-        self.parser.add_argument("isadmin", required=True, help="isadmin state is required")
         args = self.parser.parse_args()
         try :
             if User.verifyToken(args["AuthToken"]).isadmin :
                 newuser = User(email=args["email"], firstname=args["firstname"], lastname=args["lastname"], isadmin=args["isadmin"])
                 newuser.create(args["password"])
-                newuser.sendEmailVerification()
                 return {"message":"Success"}
             else :
                 return {"messege":"User isn't Admin"}, 403
