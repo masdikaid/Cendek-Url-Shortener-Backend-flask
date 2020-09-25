@@ -9,7 +9,7 @@ class ApiAdminGetCreateUser(Resource):
     def get(self):
         args = self.parser.parse_args()
         try :
-            if User.verifyToken(args["AuthToken"])["isadmin"] :
+            if User.verifyToken(args["AuthToken"]).isadmin :
                 users = []
                 for user in User.all() :
                     datauser = user.toDict
@@ -29,7 +29,7 @@ class ApiAdminGetCreateUser(Resource):
         self.parser.add_argument("isadmin", required=True, help="isadmin state is required")
         args = self.parser.parse_args()
         try :
-            if User.verifyToken(args["AuthToken"])["isadmin"] :
+            if User.verifyToken(args["AuthToken"]).isadmin :
                 newuser = User(email=args["email"], firstname=args["firstname"], lastname=args["lastname"], isadmin=args["isadmin"])
                 newuser.create(args["password"])
                 newuser.sendEmailVerification()
@@ -48,7 +48,7 @@ class ApiAdminUserManager(Resource):
     def get(self, user_id):
         args = self.parser.parse_args()
         try :
-            if User.verifyToken(args["AuthToken"])["isadmin"] :
+            if User.verifyToken(args["AuthToken"]).isadmin :
                 user = User.get(user_id)
                 datauser = user.toDict
                 datauser["id"] = user.uid
@@ -64,7 +64,7 @@ class ApiAdminUserManager(Resource):
         self.parser.add_argument("isadmin")
         args = self.parser.parse_args()
         try :
-            if User.verifyToken(args["AuthToken"])["isadmin"] :
+            if User.verifyToken(args["AuthToken"]).isadmin :
                 user = User.get(user_id)
                 if args["firstname"] :
                     user.firstname = args["firstname"]
@@ -72,6 +72,8 @@ class ApiAdminUserManager(Resource):
                     user.lastname = args["lastname"]
                 if args["isadmin"] :
                     user.isadmin = args["isadmin"]
+                if args["avatar"] :
+                    user.avatar = args["avatar"]
                 user.update()
                 return {"message":"Success"}
             else :
@@ -82,7 +84,7 @@ class ApiAdminUserManager(Resource):
     def delete(self, user_id):
         args = self.parser.parse_args()
         try :
-            if User.verifyToken(args["AuthToken"])["isadmin"] :
+            if User.verifyToken(args["AuthToken"]).isadmin :
                 User.get(user_id).delete()
                 return {"message":"Success"}
             else :

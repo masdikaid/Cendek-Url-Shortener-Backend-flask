@@ -24,5 +24,36 @@ class ApiUserManager(Resource):
         self.parser = reqparse.RequestParser()
         self.parser.add_argument("AuthToken", location="headers", required=True, help="Token Needed")
 
-    def get(self):
-        pass
+    def get(self, user_id):
+        args = self.parser.parse_args()
+        if args["AuthToken"] :
+            try :
+                user = User.verifyToken(args["AuthToken"])
+                return user.toDict
+            except ValueError as e :
+                return {"messege": f"{e}"}, 403
+        else :
+            return {"messege" : "Token is needed"}, 400
+    
+    def put(self, user_id):
+        self.parser.add_argument("firstname")
+        self.parser.add_argument("lastname")
+        self.parser.add_argument("avatar")
+        args = self.parser.parse_args()
+        if args["AuthToken"] :
+            try :
+                user = User.verifyToken(args["AuthToken"])
+                if args["firstname"] :
+                    user.firstname = args["firstname"]
+                if args["lastname"] :
+                    user.lastname = args["lastname"]
+                if args["avatar"] :
+                    user.avatar = args["avatar"]
+                user.update()
+                return {"message":"Success"}
+            except ValueError as e :
+                return {"messege": f"{e}"}, 403
+        else :
+            return {"messege" : "Token is needed"}, 400
+
+

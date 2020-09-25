@@ -64,7 +64,7 @@ class User():
         
     @staticmethod
     def verifyToken(token):
-        return userGet(checkToken(token))
+        return User.get(checkToken(token))
 
     def sendEmailVerification(self):
         userRequestVerifyMail(self.uid)
