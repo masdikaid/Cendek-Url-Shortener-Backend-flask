@@ -75,7 +75,6 @@ class VerificationHandler(Resource):
             return {"messege" : "Token is needed"}, 400
 
     def post(self):
-        # self.parser.add_argument("code")
-        # args = self.parser.parse_args()
-        # return {"message": f"Success {args["code"]}" }
-        pass
+        self.parser.add_argument("code")
+        args = self.parser.parse_args()
+        return {"message": f"Success" }
