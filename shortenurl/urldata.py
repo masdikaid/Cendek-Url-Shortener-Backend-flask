@@ -1,5 +1,3 @@
-# import sys
-# sys.path.append("d:\\project\\cendek-url-shorter\\backend\\webapi")
 from datetime import datetime
 from firebase import createShorterUrl,getAllUrlData, getUrlData, getUrlDataByUser, getVisitor, setVisitorData, setExpirationData, updateUrlData, deleteUrlData
 
