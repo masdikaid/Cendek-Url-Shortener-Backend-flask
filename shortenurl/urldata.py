@@ -12,7 +12,7 @@ class UrlStore():
     
     def setTargetUrl(self, target_url):
         if not len(target_url) == 0 :
-            return [{ datetime.now().strftime("%Y%m%d%H%M%S%f") : {"title":url["title"], "url":url["url"], "desc":url["desc"], "thumbnail":url["thumbnail"]}} for url in target_url ]
+            return [{ datetime.now().strftime("%Y%m%d%H%M%S%f") : {"title":url["title"] if "title" in url else None, "url":url["url"], "desc":url["desc"] if "desc" in url else None, "thumb":url["thumb"] if "thumb" in url else None}} for url in target_url ]
         else :
             raise ValueError("target url must have minimum one url")
 
