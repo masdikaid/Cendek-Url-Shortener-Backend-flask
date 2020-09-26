@@ -1,4 +1,4 @@
-env/
+env
 *.mdj
 *.pyc
 .vscode
