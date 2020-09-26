@@ -4,5 +4,3 @@ from shortenurl import UrlStore
 
 class ApiGetCreateUrl(Resource):
     pass
-
-class 

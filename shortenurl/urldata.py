@@ -4,7 +4,7 @@ from datetime import datetime
 from firebase import createShorterUrl,getAllUrlData, getUrlData, getUrlDataByUser, getVisitor, setVisitorData, setExpirationData, updateUrlData, deleteUrlData
 
 class UrlStore():
-    def __init__(self, userid, target_url=[], urlid=None, isactive=True, expiration=None, create_at=None):
+    def __init__(self, target_url=[], urlid=None, userid=None, isactive=True, expiration=None, create_at=None):
         self.urlid = urlid
         self.userid = userid
         self.target_url = self.setTargetUrl(target_url)
@@ -33,17 +33,17 @@ class UrlStore():
     @staticmethod
     def get(urlid):
         urldata = getUrlData(urlid)
-        return UrlStore(urldata["userid"], urldata["target_url"], urlid, urldata["isactive"], urldata["expiration"], urldata["create_at"])
+        return UrlStore(urldata["target_url"], urlid, urldata["userid"], urldata["isactive"], urldata["expiration"], urldata["create_at"])
 
     @staticmethod
     def getByUser(userid):
         urlsdata = getUrlDataByUser(userid)
-        return [ UrlStore(u["userid"], u["target_url"], u["urlid"], u["isactive"], u["expiration"], u["create_at"]) for u in urlsdata ]
+        return [ UrlStore(u["target_url"], u["urlid"], u["userid"], u["isactive"], u["expiration"], u["create_at"]) for u in urlsdata ]
 
     @staticmethod
     def all(userid):
         urlsdata = getAllUrlData(userid)
-        return [ UrlStore(u["userid"], u["target_url"], u["urlid"], u["isactive"], u["expiration"], u["create_at"]) for u in urlsdata ]    
+        return [ UrlStore(u["target_url"], u["urlid"], u["userid"], u["isactive"], u["expiration"], u["create_at"]) for u in urlsdata ]    
 
     @property
     def visitor(self):
