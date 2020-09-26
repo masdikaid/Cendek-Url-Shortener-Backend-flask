@@ -1,5 +1,5 @@
-import sys
-sys.path.append("d:\\project\\cendek-url-shorter\\backend\\webapi")
+import sys, os
+sys.path.append(os.path.dirname(__file__))
 from api import ApiUserRegister, ApiUserManager, ApiAdminGetCreateUser, ApiAdminUserManager, VerificationHandler
 from flask import Flask
 from flask_restful import Api
