@@ -1,2 +1,2 @@
 # cendek-url-shorter
-Url Shortener with django
+Url Shortener backend with flask
