@@ -12,16 +12,17 @@ class ApiAnonGetCreateUrl(Resource):
         return {"exsists": UrlStore.check(args["checkurl"])}
 
     def post(self):
-        self.parser.add_argument("urls", required=True)
-        self.parser.add_argument("expiration")
+        self.parser.add_argument("urls", required=True, type=dict, action="append")
+        self.parser.add_argument("expiration", type=dict)
         args = self.parser.parse_args()
         try :
             url = UrlStore(args["urls"])
-            url.create()
             if "expiration" in args:
                 url.expiration = args["expiration"]
+            url.create()
             urldata = url.toDict
             urldata["id"] = url.urlid
+            urldata["create_at"] = str(urldata["create_at"])
             urldata["url"] = linkUrl(url.urlid)
             return urldata, 201
         except ValueError as e :
@@ -41,6 +42,7 @@ class ApiUserGetCreateUrl(Resource):
                 for url in urls :
                     urldata = url.toDict
                     urldata["id"] = url.urlid
+                    urldata["create_at"] = str(urldata["create_at"])
                     urldata["url"] = linkUrl(url.urlid)
                     urlsdata.append(urldata)
                 return urlsdata
@@ -48,18 +50,19 @@ class ApiUserGetCreateUrl(Resource):
                 return {"messege" : f"{e}"}, 400
 
     def post(self):
-        self.parser.add_argument("urlid", required=True, default=None)
-        self.parser.add_argument("urls", required=True)
-        self.parser.add_argument("expiration")
+        self.parser.add_argument("urlid", default=None)
+        self.parser.add_argument("urls", required=True, type=dict, action="append")
+        self.parser.add_argument("expiration", type=dict)
         args = self.parser.parse_args()
         if args["AuthToken"] :
             try :
-                url = UrlStore(args["url"], args["urlid"], User.verifyToken(args["AuthToken"]).uid)
-                url.create()
+                url = UrlStore(args["urls"], args["urlid"], User.verifyToken(args["AuthToken"]).uid)
                 if "expiration" in args:
                     url.expiration = args["expiration"]
+                url.create()
                 urldata = url.toDict
                 urldata["id"] = url.urlid
+                urldata["create_at"] = str(urldata["create_at"])
                 urldata["url"] = linkUrl(url.urlid)
                 return urldata, 201
             except ValueError as e :

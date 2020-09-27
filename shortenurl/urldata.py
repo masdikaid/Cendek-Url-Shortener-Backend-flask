@@ -1,5 +1,5 @@
 from datetime import datetime
-from firebase import createShorterUrl,getAllUrlData, getUrlData, getUrlDataByUser, getVisitor, setVisitorData, setExpirationData, updateUrlData, deleteUrlData, checkUrlExists
+from firebase import createShorterUrl,getAllUrlData, getUrlData, getUrlDataByUser, getVisitor, setVisitorData, updateUrlData, deleteUrlData, checkUrlExists
 
 class UrlStore():
     def __init__(self, target_url=[], urlid=None, userid=None, isactive=True, expiration=None, create_at=None):
@@ -7,12 +7,12 @@ class UrlStore():
         self.userid = userid
         self.target_url = self.setTargetUrl(target_url)
         self.isactive = isactive
-        self.expiration = expiration
+        self.expiration = self.setExpiration(expiration)
         self.create_at = create_at 
     
     def setTargetUrl(self, target_url):
         if not len(target_url) == 0 :
-            return [{ datetime.now().strftime("%Y%m%d%H%M%S%f") : {"title":url["title"] if "title" in url else None, "url":url["url"], "desc":url["desc"] if "desc" in url else None, "thumb":url["thumb"] if "thumb" in url else None}} for url in target_url ]
+            return [{"title":url["title"] if "title" in url else None, "url":url["url"], "desc":url["desc"] if "desc" in url else None, "thumb":url["thumb"] if "thumb" in url else None} for url in target_url ]
         else :
             raise ValueError("target url must have minimum one url")
 
@@ -56,14 +56,15 @@ class UrlStore():
         }
         setVisitorData(self.urlid, visitor)
 
-    @expiration.setter
-    def expiration(self, expirationdata):
-        expiration = {
-            "expiration_at" : expirationdata["expiration_at"],
-            "expiration_messege" : expirationdata["messege"] 
-        }
-        setExpirationData(self.urlid, expiration)
-        self.expiration = expiration
+
+    def setExpiration(self, expirationdata):
+        if type(expirationdata) == dict :
+            return {
+                "expiration_at" : expirationdata["expiration_at"],
+                "expiration_messege" : expirationdata["expiration_messege"] 
+            }
+        else :
+            return None
 
     @property
     def toDict(self):

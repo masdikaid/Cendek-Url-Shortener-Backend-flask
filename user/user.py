@@ -66,8 +66,8 @@ class User():
     def verifyToken(token):
         return User.get(checkToken(token))
 
-    def getShortenUrls():
-        return UrlStore.getByUser(self.userid)
+    def getShortenUrls(self):
+        return UrlStore.getByUser(self.uid)
 
     def sendEmailVerification(self):
         userRequestVerifyMail(self.uid)

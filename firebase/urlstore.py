@@ -74,13 +74,6 @@ def setVisitorData(urlid, visitordata):
     else :
         raise ValueError("data not found")
 
-def setExpirationData(urlid, expirationdata):
-    urldata = db.collection(u"shortenurl").document(urlid)
-    if urldata.get().exists :
-        urldata = urldata.update({u"expiration" : expirationdata})
-    else :
-        raise ValueError("data not found")
-
 def deleteUrlData(urlid):
     urldata = db.collection(u"shortenurl").document(urlid)
     if urldata.get().exists :
