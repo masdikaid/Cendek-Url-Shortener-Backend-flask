@@ -1,6 +1,6 @@
 from datetime import datetime
 from firebase import userRegisterAuth, checkToken, userUpdateData, userDisable, userGet, userGetWithEmail, userGetAll, userRequestVerifyMail, userDelete, userIsVerified, userIsActive
-
+from shortenurl import UrlStore
 
 class User():
     def __init__(self, email, uid=None, firstname=None, lastname=None, avatar=None, isadmin=False):
@@ -65,6 +65,9 @@ class User():
     @staticmethod
     def verifyToken(token):
         return User.get(checkToken(token))
+
+    def getShortenUrls():
+        return UrlStore.getByUser(self.userid)
 
     def sendEmailVerification(self):
         userRequestVerifyMail(self.uid)

@@ -32,7 +32,7 @@ class ApiAdminGetCreateUser(Resource):
             if User.verifyToken(args["AuthToken"]).isadmin :
                 newuser = User(email=args["email"], firstname=args["firstname"], lastname=args["lastname"], isadmin=args["isadmin"])
                 newuser.create(args["password"])
-                return {"message":"Success"}
+                return {"message":"Success"}, 201
             else :
                 return {"messege":"User isn't Admin"}, 403
         except ValueError as error:

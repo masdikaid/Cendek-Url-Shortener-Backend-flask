@@ -1,5 +1,5 @@
 from datetime import datetime
-from firebase import createShorterUrl,getAllUrlData, getUrlData, getUrlDataByUser, getVisitor, setVisitorData, setExpirationData, updateUrlData, deleteUrlData
+from firebase import createShorterUrl,getAllUrlData, getUrlData, getUrlDataByUser, getVisitor, setVisitorData, setExpirationData, updateUrlData, deleteUrlData, checkUrlExists
 
 class UrlStore():
     def __init__(self, target_url=[], urlid=None, userid=None, isactive=True, expiration=None, create_at=None):
@@ -8,7 +8,7 @@ class UrlStore():
         self.target_url = self.setTargetUrl(target_url)
         self.isactive = isactive
         self.expiration = expiration
-        self.create_at = create_at                
+        self.create_at = create_at 
     
     def setTargetUrl(self, target_url):
         if not len(target_url) == 0 :
@@ -73,3 +73,10 @@ class UrlStore():
             "expiration" : self.expiration,
             "create_at" : self.create_at
         }
+
+    @staticmethod
+    def check(urlid):
+        return checkUrlExists(urlid)
+
+def linkUrl(urlid):
+    return "http://ndk.li/" + urlid

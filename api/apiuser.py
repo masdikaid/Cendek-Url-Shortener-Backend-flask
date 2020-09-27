@@ -14,7 +14,7 @@ class ApiUserRegister(Resource):
             args = self.parser.parse_args()
             newuser = User(email=args["email"], firstname=args["firstname"], lastname=args["lastname"])
             newuser.create(args["password"])
-            return {"message":"Success"}
+            return {"message":"Success"}, 201
         except ValueError as error:
             return {"messege": f"ValueError: {error}"}, 400
 
@@ -77,5 +77,5 @@ class VerificationHandler(Resource):
     def post(self):
         # self.parser.add_argument("code")
         # args = self.parser.parse_args()
-        # return {"message": f"Success" }
+        # return {"message": f"Success" }, 201
         pass
