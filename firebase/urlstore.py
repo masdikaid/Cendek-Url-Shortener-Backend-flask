@@ -85,7 +85,7 @@ def deleteUrlData(urlid):
         raise ValueError("data not found")
 
 def checkUrlExists(urlid):
-    if db.collection(f"shortenurl.{urlid}").get().exists :
+    if db.collection(u"shortenurl").document(urlid).get().exists :
         return True
     else :
         return False
