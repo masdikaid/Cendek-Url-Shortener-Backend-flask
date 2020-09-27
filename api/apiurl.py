@@ -7,7 +7,7 @@ class ApiAnonGetCreateUrl(Resource):
         self.parser = reqparse.RequestParser()
     
     def get(self):
-        self.parser.add_argument("chekurl", required=True)
+        self.parser.add_argument("checkurl", required=True)
         args = self.parser.parse_args()
         return {"exsists": UrlStore.check(args["checkurl"])}
 
