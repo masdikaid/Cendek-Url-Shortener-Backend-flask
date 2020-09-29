@@ -9,7 +9,7 @@ class ApiAnonGetCreateUrl(Resource):
     def get(self):
         self.parser.add_argument("checkurl", required=True)
         args = self.parser.parse_args()
-        return {"exsists": UrlStore.check(args["checkurl"])}
+        return {"exists": UrlStore.check(args["checkurl"])}
 
     def post(self):
         self.parser.add_argument("urls", required=True, type=dict, action="append")
@@ -44,6 +44,7 @@ class ApiUserGetCreateUrl(Resource):
                     urldata["id"] = url.urlid
                     urldata["create_at"] = str(urldata["create_at"])
                     urldata["url"] = linkUrl(url.urlid)
+                    urldata["hit"] = url.hit
                     urlsdata.append(urldata)
                 return urlsdata
             except ValueError as e :
@@ -67,5 +68,19 @@ class ApiUserGetCreateUrl(Resource):
                 return urldata, 201
             except ValueError as e :
                 return {"messege": f"{e}"}, 400
+
+class ApiUserUrlManager(Resource):
+    def __init__(self, url_id):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument("AuthToken", location="headers", required=True, help="Token Needed")
+
+    def get(self):
+        return {"its": "oke"}
+
+    def put(self, urlid):
+        pass
+
+    def delete(self, urlid):
+        pass
 
             

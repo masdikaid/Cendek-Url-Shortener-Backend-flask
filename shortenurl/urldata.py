@@ -2,13 +2,14 @@ from datetime import datetime
 from firebase import createShorterUrl,getAllUrlData, getUrlData, getUrlDataByUser, getVisitor, setVisitorData, updateUrlData, deleteUrlData, checkUrlExists
 
 class UrlStore():
-    def __init__(self, target_url=[], urlid=None, userid=None, isactive=True, expiration=None, create_at=None):
+    def __init__(self, target_url=[], urlid=None, userid=None, isactive=True, expiration=None, create_at=None, hit=None):
         self.urlid = urlid
         self.userid = userid
         self.target_url = self.setTargetUrl(target_url)
         self.isactive = isactive
         self.expiration = self.setExpiration(expiration)
         self.create_at = create_at 
+        self.hit = hit
     
     def setTargetUrl(self, target_url):
         if not len(target_url) == 0 :
@@ -31,17 +32,17 @@ class UrlStore():
     @staticmethod
     def get(urlid):
         urldata = getUrlData(urlid)
-        return UrlStore(urldata["target_url"], urlid, urldata["userid"], urldata["isactive"], urldata["expiration"], urldata["create_at"])
+        return UrlStore(urldata["target_url"], urlid, urldata["userid"], urldata["isactive"], urldata["expiration"], urldata["create_at"], len(urldata["visitor"]) if "visitor" in urldata else None)
 
     @staticmethod
     def getByUser(userid):
         urlsdata = getUrlDataByUser(userid)
-        return [ UrlStore(u["target_url"], u["urlid"], u["userid"], u["isactive"], u["expiration"], u["create_at"]) for u in urlsdata ]
+        return [ UrlStore(u["target_url"], u["urlid"], u["userid"], u["isactive"], u["expiration"], u["create_at"], len(u["visitor"]) if "visitor" in u else None) for u in urlsdata ]
 
     @staticmethod
     def all(userid):
         urlsdata = getAllUrlData(userid)
-        return [ UrlStore(u["target_url"], u["urlid"], u["userid"], u["isactive"], u["expiration"], u["create_at"]) for u in urlsdata ]    
+        return [ UrlStore(u["target_url"], u["urlid"], u["userid"], u["isactive"], u["expiration"], u["create_at"], len(u["visitor"]) if "visitor" in u else None) for u in urlsdata ]    
 
     @property
     def visitor(self):
