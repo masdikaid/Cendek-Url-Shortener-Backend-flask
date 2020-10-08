@@ -17,9 +17,10 @@ class ApiAnonGetCreateUrl(Resource):
         args = self.parser.parse_args()
         try :
             url = UrlStore(args["urls"])
-            if "expiration" in args:
-                url.expiration = args["expiration"]
             url.create()
+            if "expiration" in args:
+                url.expiration(args["expiration"])
+                url.update()
             urldata = url.toDict
             urldata["id"] = url.urlid
             urldata["create_at"] = str(urldata["create_at"])
@@ -58,9 +59,10 @@ class ApiUserGetCreateUrl(Resource):
         if args["AuthToken"] :
             try :
                 url = UrlStore(args["urls"], args["urlid"], User.verifyToken(args["AuthToken"]).uid)
-                if "expiration" in args:
-                    url.expiration = args["expiration"]
                 url.create()
+                if "expiration" in args:
+                    url.setExpiration(args["expiration"])
+                    url.update()
                 urldata = url.toDict
                 urldata["id"] = url.urlid
                 urldata["create_at"] = str(urldata["create_at"])
@@ -70,17 +72,60 @@ class ApiUserGetCreateUrl(Resource):
                 return {"messege": f"{e}"}, 400
 
 class ApiUserUrlManager(Resource):
-    def __init__(self, url_id):
+    def __init__(self):
         self.parser = reqparse.RequestParser()
         self.parser.add_argument("AuthToken", location="headers", required=True, help="Token Needed")
 
-    def get(self):
-        return {"its": "oke"}
+    def get(self, urlid):
+        args = self.parser.parse_args()
+        if args["AuthToken"] :
+            try :
+                user = User.verifyToken(args["AuthToken"]).uid
+                url = UrlStore.get(urlid)
+                if url.userid == user :
+                    urldata = url.toDict
+                    urldata["id"] = url.urlid
+                    urldata["create_at"] = str(urldata["create_at"])
+                    urldata["url"] = linkUrl(url.urlid)
+                    return urldata
+                else :
+                    return {"messege": "Invalid Auth"}, 400
+            except ValueError as e :
+                return {"messege": f"{e}"}, 400
 
     def put(self, urlid):
-        pass
+        self.parser.add_argument("urls", required=True, type=dict, action="append")
+        self.parser.add_argument("expiration", type=dict)
+        args = self.parser.parse_args()
+        if args["AuthToken"] :
+            try :
+                user = User.verifyToken(args["AuthToken"]).uid
+                url = UrlStore.get(urlid)
+                if url.userid == user :
+                    url.setExpiration(args["expiration"])
+                    url.setTargetUrl(args["urls"])
+                    url.update()
+                    urldata = url.toDict
+                    urldata["id"] = url.urlid
+                    urldata["create_at"] = str(urldata["create_at"])
+                    urldata["url"] = linkUrl(url.urlid)
+                    return urldata
+                else :
+                    return {"messege": "Invalid Auth"}, 400
+            except ValueError as e :
+                return {"messege": f"{e}"}, 400
 
     def delete(self, urlid):
-        pass
+        try :
+            args = self.parser.parse_args()
+            user = User.verifyToken(args["AuthToken"]).uid
+            url = UrlStore.get(urlid)
+            if url.userid == user :
+                url.delete()
+                return {"messege": "success"}, 400
+            else :
+                return {"messege": "Invalid Auth"}, 400
+        except ValueError as e :
+            return {"messege": f"{e}"}, 400
 
             
