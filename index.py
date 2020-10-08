@@ -17,7 +17,7 @@ api.add_resource(VerificationHandler, '/account/verification/')
 api.add_resource(ApiAdminGetCreateUser, '/admin/users/')
 api.add_resource(ApiAdminUserManager, '/admin/users/<string:user_id>/')
 
-@app.route("/<sring:urlid")
+# @app.route("/<sring:urlid>")
 
 if __name__ == '__main__':
     app.run(debug=True)
