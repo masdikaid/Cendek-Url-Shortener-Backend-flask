@@ -28,7 +28,7 @@ def getUrlData(urlid):
     urldata = db.collection(u"shortenurl").document(urlid).get()
     if urldata.exists :
         return urldata.to_dict()
-    else :
+    elif not urldata.exists :
         raise ValueError("data not found")
 
 def getUrlDataByUser(userid):

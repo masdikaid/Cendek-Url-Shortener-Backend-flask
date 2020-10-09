@@ -85,6 +85,3 @@ class UrlStore():
     @staticmethod
     def check(urlid):
         return checkUrlExists(urlid)
-
-def linkUrl(urlid):
-    return "http://ndk.li/" + urlid

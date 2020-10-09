@@ -1,6 +1,7 @@
 from flask_restful import reqparse, Resource
+from flask import url_for
 from user import User
-from shortenurl import UrlStore, linkUrl
+from shortenurl import UrlStore
 
 class ApiAnonGetCreateUrl(Resource):
     def __init__(self):
@@ -18,13 +19,13 @@ class ApiAnonGetCreateUrl(Resource):
         try :
             url = UrlStore(args["urls"])
             url.create()
-            if "expiration" in args:
+            if args["expiration"]:
                 url.expiration(args["expiration"])
                 url.update()
             urldata = url.toDict
             urldata["id"] = url.urlid
             urldata["create_at"] = str(urldata["create_at"])
-            urldata["url"] = linkUrl(url.urlid)
+            urldata["url"] = url_for("getUrl", urlid=url.urlid, _external=True)
             return urldata, 201
         except ValueError as e :
             return {"messege": f"{e}"}, 400
@@ -44,7 +45,7 @@ class ApiUserGetCreateUrl(Resource):
                     urldata = url.toDict
                     urldata["id"] = url.urlid
                     urldata["create_at"] = str(urldata["create_at"])
-                    urldata["url"] = linkUrl(url.urlid)
+                    urldata["url"] = url_for("getUrl", urlid=url.urlid, _external=True)
                     urldata["hit"] = url.hit
                     urlsdata.append(urldata)
                 return urlsdata
@@ -60,13 +61,13 @@ class ApiUserGetCreateUrl(Resource):
             try :
                 url = UrlStore(args["urls"], args["urlid"], User.verifyToken(args["AuthToken"]).uid)
                 url.create()
-                if "expiration" in args:
+                if args["expiration"]:
                     url.setExpiration(args["expiration"])
                     url.update()
                 urldata = url.toDict
                 urldata["id"] = url.urlid
                 urldata["create_at"] = str(urldata["create_at"])
-                urldata["url"] = linkUrl(url.urlid)
+                urldata["url"] = url_for("getUrl", urlid=url.urlid, _external=True)
                 return urldata, 201
             except ValueError as e :
                 return {"messege": f"{e}"}, 400
@@ -86,7 +87,7 @@ class ApiUserUrlManager(Resource):
                     urldata = url.toDict
                     urldata["id"] = url.urlid
                     urldata["create_at"] = str(urldata["create_at"])
-                    urldata["url"] = linkUrl(url.urlid)
+                    urldata["url"] = url_for("getUrl", urlid=url.urlid, _external=True)
                     return urldata
                 else :
                     return {"messege": "Invalid Auth"}, 400
@@ -102,13 +103,14 @@ class ApiUserUrlManager(Resource):
                 user = User.verifyToken(args["AuthToken"]).uid
                 url = UrlStore.get(urlid)
                 if url.userid == user :
-                    url.setExpiration(args["expiration"])
+                    if args["expiration"] :
+                        url.setExpiration(args["expiration"])
                     url.setTargetUrl(args["urls"])
                     url.update()
                     urldata = url.toDict
                     urldata["id"] = url.urlid
                     urldata["create_at"] = str(urldata["create_at"])
-                    urldata["url"] = linkUrl(url.urlid)
+                    urldata["url"] = url_for("getUrl", urlid=url.urlid, _external=True)
                     return urldata
                 else :
                     return {"messege": "Invalid Auth"}, 400
@@ -122,10 +124,20 @@ class ApiUserUrlManager(Resource):
             url = UrlStore.get(urlid)
             if url.userid == user :
                 url.delete()
-                return {"messege": "success"}, 400
+                return {"messege": "success"}
             else :
                 return {"messege": "Invalid Auth"}, 400
         except ValueError as e :
             return {"messege": f"{e}"}, 400
 
-            
+
+class UrlGetRedirect:
+    def __init__(self, urlid):
+        self.url = UrlStore.get(urlid)
+
+    def hit(self, request):
+        self.url.visitor = {
+            "ipaddress" : request.remote_addr,
+            "device" : request.user_agent.platform
+        }
+        return self.url.toDict

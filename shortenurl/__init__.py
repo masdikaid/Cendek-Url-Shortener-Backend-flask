@@ -1,1 +1,1 @@
-from .urldata import UrlStore, linkUrl
+from .urldata import UrlStore
