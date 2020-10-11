@@ -1,6 +1,6 @@
 import sys, os, datetime
 sys.path.append(os.path.dirname(__file__))
-from api import ApiUserRegister, ApiUserManager, ApiAdminGetCreateUser, ApiAdminUserManager, VerificationHandler, ApiUserGetCreateUrl, ApiAnonGetCreateUrl, ApiUserUrlManager, UrlGetRedirect
+from api import ApiUserRegister, ApiUserManager, ApiAdminGetCreateUser, ApiAdminUserManager, VerificationHandler, ApiUserGetCreateUrl, ApiAnonGetCreateUrl, ApiUserUrlManager
 from flask import Flask, request, redirect, render_template
 from flask_restful import Api
 
