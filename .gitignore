@@ -2,4 +2,5 @@ env
 *.mdj
 *.pyc
 .vscode
+.env
 test.py
