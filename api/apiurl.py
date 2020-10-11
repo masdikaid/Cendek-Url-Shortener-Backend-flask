@@ -129,15 +129,3 @@ class ApiUserUrlManager(Resource):
                 return {"messege": "Invalid Auth"}, 400
         except ValueError as e :
             return {"messege": f"{e}"}, 400
-
-
-class UrlGetRedirect:
-    def __init__(self, urlid):
-        self.url = UrlStore.get(urlid)
-
-    def hit(self, request):
-        self.url.visitor = {
-            "ipaddress" : request.remote_addr,
-            "device" : request.user_agent.platform
-        }
-        return self.url.toDict

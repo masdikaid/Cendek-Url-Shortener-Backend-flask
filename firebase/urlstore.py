@@ -1,5 +1,6 @@
 from secrets import token_urlsafe
 from random import choice
+from datetime import datetime
 from .setup import db, exceptions, firestore
 
 def createShorterUrl(urlid, userid, urldata):
@@ -33,7 +34,7 @@ def getUrlData(urlid):
 
 def getUrlDataByUser(userid):
     urldata = db.collection(u"shortenurl").where("userid", "==", userid)
-    urldata = urldata.where("isactive","==", True).get()
+    urldata = urldata.where("delete_at","==", None).get()
     if len(urldata) > 0 :
         urls = []
         for u in urldata :
@@ -45,7 +46,7 @@ def getUrlDataByUser(userid):
         raise ValueError("data not found")
 
 def getAllUrlData(userid):
-    urldata = db.collection(u"shortenurl").where("isactive","==",True).get()
+    urldata = db.collection(u"shortenurl").where("delete_at","==",None).get()
     if len(urldata) > 0 :
         urls = []
         for u in urldata :
@@ -78,7 +79,7 @@ def deleteUrlData(urlid):
     urldata = db.collection(u"shortenurl").document(urlid)
     if urldata.get().exists :
         newurldata = urldata.get().to_dict()
-        newurldata["isactive"]=False
+        newurldata["delete_at"]=datetime.now()
         newurldata = db.collection(u"shortenurl").set(urldata)
         urldata.delete()
     else :

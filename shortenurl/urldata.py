@@ -2,11 +2,11 @@ from datetime import datetime
 from firebase import createShorterUrl,getAllUrlData, getUrlData, getUrlDataByUser, getVisitor, setVisitorData, updateUrlData, deleteUrlData, checkUrlExists
 
 class UrlStore():
-    def __init__(self, target_url=[], urlid=None, userid=None, isactive=True, expiration=None, create_at=None, hit=None):
+    def __init__(self, target_url=[], urlid=None, userid=None, delete_at=True, expiration=None, create_at=None, hit=None):
         self.urlid = urlid
         self.userid = userid
         self.target_url = self.convertTargetUrl(target_url)
-        self.isactive = isactive
+        self.delete_at = delete_at
         self.expiration = self.convertExpiration(expiration)
         self.create_at = create_at 
         self.hit = hit
@@ -35,31 +35,21 @@ class UrlStore():
     @staticmethod
     def get(urlid):
         urldata = getUrlData(urlid)
-        return UrlStore(urldata["target_url"], urlid, urldata["userid"], urldata["isactive"], urldata["expiration"], urldata["create_at"], len(urldata["visitor"]) if "visitor" in urldata else None)
+        return UrlStore(urldata["target_url"], urlid, urldata["userid"], urldata["delete_at"], urldata["expiration"], urldata["create_at"], len(urldata["visitor"]) if "visitor" in urldata else None)
 
     @staticmethod
     def getByUser(userid):
         urlsdata = getUrlDataByUser(userid)
-        return [ UrlStore(u["target_url"], u["urlid"], u["userid"], u["isactive"], u["expiration"], u["create_at"], len(u["visitor"]) if "visitor" in u else None) for u in urlsdata ]
+        return [ UrlStore(u["target_url"], u["urlid"], u["userid"], u["delete_at"], u["expiration"], u["create_at"], len(u["visitor"]) if "visitor" in u else None) for u in urlsdata ]
 
     @staticmethod
     def all(userid):
         urlsdata = getAllUrlData(userid)
-        return [ UrlStore(u["target_url"], u["urlid"], u["userid"], u["isactive"], u["expiration"], u["create_at"], len(u["visitor"]) if "visitor" in u else None) for u in urlsdata ]    
+        return [ UrlStore(u["target_url"], u["urlid"], u["userid"], u["delete_at"], u["expiration"], u["create_at"], len(u["visitor"]) if "visitor" in u else None) for u in urlsdata ]    
 
     @property
     def visitor(self):
         return getVisitor(self.urlid)
-
-    @visitor.setter
-    def visitor(self, visitordata):
-        visitor = {
-            "timestamp" : datetime.now(),
-            "ipaddress" : visitordata["ipaddress"],
-            "device" : visitordata["device"]
-        }
-        setVisitorData(self.urlid, visitor)
-
 
     def convertExpiration(self, expirationdata):
         if type(expirationdata) == dict :
@@ -77,7 +67,7 @@ class UrlStore():
     def toDict(self):
         return {
             "target_url" : self.target_url,
-            "isactive" : self.isactive,
+            "delete_at" : self.delete_at,
             "expiration" : self.expiration,
             "create_at" : self.create_at
         }
