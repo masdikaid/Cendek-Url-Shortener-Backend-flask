@@ -25,7 +25,7 @@ class ApiAnonGetCreateUrl(Resource):
             urldata = url.toDict
             urldata["id"] = url.urlid
             urldata["create_at"] = str(urldata["create_at"])
-            urldata["url"] = url_for("getUrl", urlid=url.urlid, _external=True)
+            urldata["url"] = f"https://ndk-redirect.herokuapp.com/{url.urlid}"
             return urldata, 201
         except ValueError as e :
             return {"messege": f"{e}"}, 400
@@ -45,7 +45,7 @@ class ApiUserGetCreateUrl(Resource):
                     urldata = url.toDict
                     urldata["id"] = url.urlid
                     urldata["create_at"] = str(urldata["create_at"])
-                    urldata["url"] = url_for("getUrl", urlid=url.urlid, _external=True)
+                    urldata["url"] = f"https://ndk-redirect.herokuapp.com/{url.urlid}"
                     urldata["hit"] = url.hit
                     urlsdata.append(urldata)
                 return urlsdata
@@ -67,7 +67,7 @@ class ApiUserGetCreateUrl(Resource):
                 urldata = url.toDict
                 urldata["id"] = url.urlid
                 urldata["create_at"] = str(urldata["create_at"])
-                urldata["url"] = url_for("getUrl", urlid=url.urlid, _external=True)
+                urldata["url"] = f"https://ndk-redirect.herokuapp.com/{url.urlid}"
                 return urldata, 201
             except ValueError as e :
                 return {"messege": f"{e}"}, 400
@@ -87,7 +87,7 @@ class ApiUserUrlManager(Resource):
                     urldata = url.toDict
                     urldata["id"] = url.urlid
                     urldata["create_at"] = str(urldata["create_at"])
-                    urldata["url"] = url_for("getUrl", urlid=url.urlid, _external=True)
+                    urldata["url"] = f"https://ndk-redirect.herokuapp.com/{url.urlid}"
                     return urldata
                 else :
                     return {"messege": "Invalid Auth"}, 400
@@ -110,7 +110,7 @@ class ApiUserUrlManager(Resource):
                     urldata = url.toDict
                     urldata["id"] = url.urlid
                     urldata["create_at"] = str(urldata["create_at"])
-                    urldata["url"] = url_for("getUrl", urlid=url.urlid, _external=True)
+                    urldata["url"] = f"https://ndk-redirect.herokuapp.com/{url.urlid}"
                     return urldata
                 else :
                     return {"messege": "Invalid Auth"}, 400
